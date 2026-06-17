@@ -19,7 +19,7 @@ from src.extraction.sunat_scraper import sunat_consultation
 
 from src.processing.data_cleaner import clean_data
 
-from src.ingestion.loader_data import get_db_connection, upsert_sunat
+from src.ingestion.loader_data import get_db_connection, upsert_sunat, resume_process
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -43,6 +43,8 @@ if __name__ == "__main__":
 
     BATCH_SIZE = 10
 
+    RESUME_PROCESS = True
+
     folder_id = "19qttOpGgAZGo6pgqsW4wSHkrGxIg2nrV"
     file_name = "Reporte_Giros_Factoring.xlsx"
 
@@ -60,6 +62,15 @@ if __name__ == "__main__":
     print(f"Total RUCs únicos encontrados: {len(unique_rucs)}")
 
     conn, server = get_db_connection(logger, base_dir)
+
+    if RESUME_PROCESS:
+        unique_rucs = resume_process(conn, unique_rucs, logger)
+
+    if not unique_rucs:
+        logger.info("No hay RUCs pendientes por procesar")
+        conn.close()
+        server.stop()
+        exit()
 
     with sync_playwright() as p:
 

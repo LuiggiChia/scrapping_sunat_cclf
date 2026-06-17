@@ -153,3 +153,24 @@ def upsert_sunat(conn, df, logger):
         conn.rollback()
         logger.error(f"Error en UPSERT: {e}")
         raise
+
+
+def resume_process(conn, lst_rucs, logger):
+
+    query = """
+        SELECT ruc
+        FROM toquea_sunat.dm_clientes_sunat
+    """
+
+    df_bd = pd.read_sql(query, conn)
+
+    rucs_excel = set(map(str, lst_rucs))
+    rucs_bd = set(df_bd["ruc"].astype(str))
+
+    missing_rucs = list(rucs_excel - rucs_bd)
+
+    logger.info(f"RUCs Excel: {len(rucs_excel)}")
+    logger.info(f"RUCs procesados: {len(rucs_bd)}")
+    logger.info(f"RUCs pendientes: {len(missing_rucs)}")
+
+    return missing_rucs

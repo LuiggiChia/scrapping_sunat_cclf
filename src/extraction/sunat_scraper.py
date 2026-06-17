@@ -16,6 +16,8 @@ def sunat_consultation(playwright: Playwright, valor: str) -> dict | None:
 
     try:
 
+        print(f"Se está realizando la consulta: {valor} ...")
+
         page.goto("https://e-consultaruc.sunat.gob.pe/", wait_until="networkidle")
 
         page.wait_for_selector("#btnPorRuc", timeout=10000)

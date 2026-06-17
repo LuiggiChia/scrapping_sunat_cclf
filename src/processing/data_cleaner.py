@@ -4,13 +4,15 @@ import pandas as pd
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
-    df["domicilio_fiscal"] = df["domicilio_fiscal"].fillna("")
+    df["domicilio_fiscal"] = df["domicilio_fiscal"].replace("-", None)
 
     parts = df["domicilio_fiscal"].str.rsplit(" - ", n=2, expand=True)
 
     df["domicilio_fiscal_detalle"] = parts[0]
-    df["provincia"] = parts[1]
-    df["distrito"] = parts[2]
+
+    df["provincia"] = parts[1] if parts.shape[1] > 1 else None
+
+    df["distrito"] = parts[2] if parts.shape[1] > 2 else None
 
     df["departamento"] = df["domicilio_fiscal_detalle"].str.split().str[-1]
     df["direccion"] = df["domicilio_fiscal_detalle"].str.split().str[:-1].str.join(" ")

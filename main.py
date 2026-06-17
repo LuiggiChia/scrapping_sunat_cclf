@@ -6,6 +6,7 @@ import pandas as pd
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 import warnings
+
 warnings.filterwarnings("ignore")
 
 from src.extraction.drive_reader import (
@@ -30,10 +31,9 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
     handlers=[
-        logging.FileHandler(os.path.join(logs_path, log_filename),
-                            encoding="utf-8"),
-        logging.StreamHandler()
-    ]
+        logging.FileHandler(os.path.join(logs_path, log_filename), encoding="utf-8"),
+        logging.StreamHandler(),
+    ],
 )
 
 logger = logging.getLogger(__name__)

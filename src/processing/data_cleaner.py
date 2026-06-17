@@ -7,7 +7,8 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     mask = df["domicilio_fiscal"].isna() | (df["domicilio_fiscal"].str.strip() == "")
 
     df["domicilio_fiscal"] = df["domicilio_fiscal"].fillna("")
-    parts = df["domicilio_fiscal"].str.rsplit(" - ", n=2, expand=True).reindex(columns=range(3))
+
+    parts = df["domicilio_fiscal"].str.rsplit(" - ", n=2, expand=True).reindex(columns=range(3), fill_value="")
 
     df["domicilio_fiscal_detalle"] = "-"
     df["provincia"] = "-"

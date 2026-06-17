@@ -24,15 +24,19 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.drop(columns=["domicilio_fiscal_detalle"])
 
+    df["actividad_secundaria_1"] = "-"
+    df["actividad_secundaria_2"] = "-"
+    df["actividad_secundaria_3"] = "-"
+
     if "actividades_secundarias" in df.columns:
 
         df["actividades_secundarias"] = df["actividades_secundarias"].apply(
             lambda x: x if isinstance(x, list) else []
         )
 
-        df["actividad_secundaria_1"] = df["actividades_secundarias"].str[0]
-        df["actividad_secundaria_2"] = df["actividades_secundarias"].str[1]
-        df["actividad_secundaria_3"] = df["actividades_secundarias"].str[2]
+        df["actividad_secundaria_1"] = df["actividades_secundarias"].str[0].fillna("-")
+        df["actividad_secundaria_2"] = df["actividades_secundarias"].str[1].fillna("-")
+        df["actividad_secundaria_3"] = df["actividades_secundarias"].str[2].fillna("-")
 
         df = df.drop(columns=["actividades_secundarias"])
 
@@ -89,6 +93,10 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         "actividad_secundaria_3",
         "domicilio_fiscal",
     ]
+
+    for col in ordered_columns:
+        if col not in df.columns:
+            df[col] = "-"
 
     df = df[ordered_columns]
 

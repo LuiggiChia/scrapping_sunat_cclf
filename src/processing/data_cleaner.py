@@ -4,24 +4,23 @@ import pandas as pd
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
-    mask = df["domicilio_fiscal"].isna() | (df["domicilio_fiscal"].str.strip() == "")
+    df["domicilio_fiscal"] = df["domicilio_fiscal"].fillna("-").str.strip()
 
-    df["domicilio_fiscal"] = df["domicilio_fiscal"].fillna("")
+    parts = (
+        df["domicilio_fiscal"]
+        .str.rsplit(" - ", n=2, expand=True)
+        .reindex(columns=range(3), fill_value="-")
+    )
 
-    parts = df["domicilio_fiscal"].str.rsplit(" - ", n=2, expand=True).reindex(columns=range(3), fill_value="")
+    df["domicilio_fiscal_detalle"] = parts[0].fillna("-")
+    df["provincia"] = parts[1].fillna("-")
+    df["distrito"] = parts[2].fillna("-")
 
-    df["domicilio_fiscal_detalle"] = "-"
-    df["provincia"] = "-"
-    df["distrito"] = "-"
-    df["departamento"] = "-"
-    df["direccion"] = "-"
+    df["departamento"] = df["domicilio_fiscal_detalle"].str.split().str[-1].fillna("-")
+    df["direccion"] = df["domicilio_fiscal_detalle"].str.split().str[:-1].str.join(" ").fillna("-")
 
-    df.loc[~mask, "domicilio_fiscal_detalle"] = parts[0]
-    df.loc[~mask, "provincia"] = parts[1]
-    df.loc[~mask, "distrito"] = parts[2]
-
-    df.loc[~mask, "departamento"] = df.loc[~mask, "domicilio_fiscal_detalle"].str.split().str[-1]
-    df.loc[~mask, "direccion"] = df.loc[~mask, "domicilio_fiscal_detalle"].str.split().str[:-1].str.join(" ")
+    df.loc[df["direccion"] == "", "direccion"] = "-"
+    df.loc[df["departamento"] == "", "departamento"] = "-"
 
     df = df.drop(columns=["domicilio_fiscal_detalle"])
 

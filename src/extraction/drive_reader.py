@@ -51,7 +51,7 @@ def get_reporte_giros_factoring(service, folder_id, file_name):
     file_bytes = service.files().get_media(fileId=file_id).execute()
 
     df = pd.read_excel(io.BytesIO(file_bytes), engine="openpyxl")
-
+    df = df[df["rut_cliente"].astype(str).str.len() == 11]
     print(f"'{file_name}' loaded successfully.")
 
     return df

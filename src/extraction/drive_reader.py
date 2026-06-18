@@ -23,8 +23,16 @@ def create_drive_service(credentials):
     return build("drive", "v3", credentials=credentials)
 
 
-def get_reporte_giros_factoring(service, folder_id, file_name):
+def get_reporte_giros_factoring(service, folder_id, file_name, type_user):
     """Search for the file inside the target folder"""
+
+    if type_user == "CLIENTE":
+        column_name = "rut_cliente"
+    elif type_user == "DEUDOR":
+        column_name = "rut_deudor1"
+    else:
+        return None
+
     query = (
         f"name = '{file_name}' " f"and '{folder_id}' in parents " f"and trashed = false"
     )
@@ -51,7 +59,7 @@ def get_reporte_giros_factoring(service, folder_id, file_name):
     file_bytes = service.files().get_media(fileId=file_id).execute()
 
     df = pd.read_excel(io.BytesIO(file_bytes), engine="openpyxl")
-    df = df[df["rut_cliente"].astype(str).str.len() == 11]
+    df = df[df[column_name].astype(str).str.len() == 11]
     print(f"'{file_name}' loaded successfully.")
 
     return df

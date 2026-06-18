@@ -90,7 +90,8 @@ def upsert_sunat(conn, df, logger):
             actividad_secundaria_1,
             actividad_secundaria_2,
             actividad_secundaria_3,
-            domicilio_fiscal
+            domicilio_fiscal,
+            tipo_usuario
         )
         VALUES %s
         ON CONFLICT (ruc)
@@ -114,6 +115,7 @@ def upsert_sunat(conn, df, logger):
             actividad_secundaria_2 = EXCLUDED.actividad_secundaria_2,
             actividad_secundaria_3 = EXCLUDED.actividad_secundaria_3,
             domicilio_fiscal = EXCLUDED.domicilio_fiscal;
+            tipo_usuario = EXCLUDED.tipo_usuario
     """
 
     values = [
@@ -138,6 +140,7 @@ def upsert_sunat(conn, df, logger):
             r.get("actividad_secundaria_2"),
             r.get("actividad_secundaria_3"),
             r.get("domicilio_fiscal"),
+            r.get("tipo_usuario")
         )
         for r in df.to_dict(orient="records")
     ]

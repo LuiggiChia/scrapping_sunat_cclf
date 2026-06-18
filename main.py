@@ -43,7 +43,9 @@ if __name__ == "__main__":
 
     BATCH_SIZE = 10
 
-    RESUME_PROCESS = True
+    RESUME_PROCESS = False
+
+    TYPE_USER = "DEUDOR"
 
     folder_id = "19qttOpGgAZGo6pgqsW4wSHkrGxIg2nrV"
     file_name = "Reporte_Giros_Factoring.xlsx"
@@ -92,6 +94,7 @@ if __name__ == "__main__":
             if results:
                 df = pd.DataFrame(results)
                 df_clean = clean_data(df)
+                df_clean["tipo_usuario"] == TYPE_USER
 
                 upsert_sunat(conn, df_clean, logger)
 

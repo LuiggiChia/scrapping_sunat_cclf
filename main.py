@@ -43,9 +43,11 @@ if __name__ == "__main__":
 
     BATCH_SIZE = 10
 
-    RESUME_PROCESS = False
+    RESUME_PROCESS = False  # Actualizar
 
-    TYPE_USER = "DEUDOR"
+    TYPE_USER = "DEUDOR"  # Actualizar
+
+    print(f"Se está ejecutando para iniciar de 0: {RESUME_PROCESS}, para los tipos de usuario: {TYPE_USER}")
 
     folder_id = "19qttOpGgAZGo6pgqsW4wSHkrGxIg2nrV"
     file_name = "Reporte_Giros_Factoring.xlsx"
@@ -54,7 +56,7 @@ if __name__ == "__main__":
 
     drive_service = create_drive_service(credentials)
 
-    df_factoring = get_reporte_giros_factoring(drive_service, folder_id, file_name)
+    df_factoring = get_reporte_giros_factoring(drive_service, folder_id, file_name, TYPE_USER)
 
     if df_factoring is None:
         raise ValueError("No se pudo obtener el archivo de Drive.")

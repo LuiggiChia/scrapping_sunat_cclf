@@ -70,7 +70,7 @@ def upsert_sunat(conn, df, logger):
     df = df.where(pd.notnull(df), None)
 
     query = """
-        INSERT INTO toquea_sunat.dm_clientes_sunat (
+        INSERT INTO toquea_sunat.dm_contribuyentes_sunat (
             fecha_ejecucion,
             ruc,
             razon_social,
@@ -94,28 +94,6 @@ def upsert_sunat(conn, df, logger):
             tipo_usuario
         )
         VALUES %s
-        ON CONFLICT (ruc)
-        DO UPDATE SET
-            fecha_ejecucion = EXCLUDED.fecha_ejecucion,
-            razon_social = EXCLUDED.razon_social,
-            tipo_contribuyente = EXCLUDED.tipo_contribuyente,
-            nombre_comercial = EXCLUDED.nombre_comercial,
-            fecha_inscripcion = EXCLUDED.fecha_inscripcion,
-            fecha_inicio_actividades = EXCLUDED.fecha_inicio_actividades,
-            estado_contribuyente = EXCLUDED.estado_contribuyente,
-            condicion_contribuyente = EXCLUDED.condicion_contribuyente,
-            direccion = EXCLUDED.direccion,
-            departamento = EXCLUDED.departamento,
-            provincia = EXCLUDED.provincia,
-            distrito = EXCLUDED.distrito,
-            actividad_comercio_exterior = EXCLUDED.actividad_comercio_exterior,
-            sistema_contabilidad = EXCLUDED.sistema_contabilidad,
-            actividad_principal = EXCLUDED.actividad_principal,
-            actividad_secundaria_1 = EXCLUDED.actividad_secundaria_1,
-            actividad_secundaria_2 = EXCLUDED.actividad_secundaria_2,
-            actividad_secundaria_3 = EXCLUDED.actividad_secundaria_3,
-            domicilio_fiscal = EXCLUDED.domicilio_fiscal;
-            tipo_usuario = EXCLUDED.tipo_usuario
     """
 
     values = [
@@ -158,11 +136,55 @@ def upsert_sunat(conn, df, logger):
         raise
 
 
+def upsert_sunat_d_coactiva(conn, df, logger):
+
+    df = df.astype(object).where(pd.notnull(df), None)
+
+    query = """
+        INSERT INTO toquea_sunat."dm_contribuyentes_deuda_coactiva" (
+            fecha_ejecucion,
+            ruc,
+            tiene_deuda,
+            monto,
+            periodo,
+            fecha_inicio,
+            entidad,
+            tipo_usuario
+        )
+        VALUES %s
+    """
+
+    values = [
+        (
+            r.get("fecha_ejecucion"),
+            r.get("ruc"),
+            r.get("tiene_deuda"),
+            r.get("monto"),
+            r.get("periodo"),
+            r.get("fecha_inicio"),
+            r.get("entidad"),
+            r.get("tipo_usuario")
+        )
+        for r in df.to_dict(orient="records")
+    ]
+
+    try:
+        with conn.cursor() as cur:
+            execute_values(cur, query, values, page_size=1000)
+        conn.commit()
+        logger.info(f"Inserción masiva completada: {len(df)} registros de deudas cargados.")
+
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Error crítico durante la inserción en la tabla de deudas: {e}")
+        raise
+
+
 def resume_process(conn, lst_rucs, logger):
 
     query = """
         SELECT ruc
-        FROM toquea_sunat.dm_clientes_sunat
+        FROM toquea_sunat.dm_contribuyentes_sunat
     """
 
     df_bd = pd.read_sql(query, conn)

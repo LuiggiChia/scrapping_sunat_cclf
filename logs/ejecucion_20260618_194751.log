@@ -1,0 +1,10 @@
+2026-06-18 19:47:51,627 | INFO | file_cache is only supported with oauth2client<4.0.0
+2026-06-18 19:47:54,941 | INFO | Connected (version 2.0, client OpenSSH_9.6p1)
+2026-06-18 19:47:55,544 | INFO | Authentication (publickey) successful!
+2026-06-18 19:47:55,546 | INFO | Túnel SSH iniciado en puerto local: 64740
+2026-06-18 19:47:57,119 | INFO | Conexión a PostgreSQL exitosa
+2026-06-18 19:48:20,862 | INFO | UPSERT completado: 1 registros
+2026-06-18 19:48:21,161 | ERROR | Error crítico durante la inserción en la tabla de deudas: invalid input syntax for type timestamp: "NaT"
+LINE 12: ...:20.419430'::timestamp,'20608618873','NO','-','-','NaT'::tim...
+                                                              ^
+

@@ -103,3 +103,13 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.astype(object).where(pd.notnull(df), None)
 
     return df
+
+
+def clean_data_deuda_coactiva(df: pd.DataFrame) -> pd.DataFrame:
+    df["fecha_ejecucion"] = datetime.datetime.now()
+    df['fecha_inicio'] = pd.to_datetime(df['fecha_inicio'], dayfirst=True, errors='coerce')
+    df['monto'] = pd.to_numeric(df['monto'], errors='coerce')
+    df = df.where(pd.notnull(df), None)
+    df = df[["fecha_ejecucion", "ruc", "tiene_deuda", "monto", "periodo", "fecha_inicio", "entidad"]]
+
+    return df

@@ -1,0 +1,9 @@
+2026-06-18 19:24:32,559 | INFO | file_cache is only supported with oauth2client<4.0.0
+2026-06-18 19:24:36,002 | INFO | Connected (version 2.0, client OpenSSH_9.6p1)
+2026-06-18 19:24:36,598 | INFO | Authentication (publickey) successful!
+2026-06-18 19:24:36,600 | INFO | Túnel SSH iniciado en puerto local: 58947
+2026-06-18 19:24:38,187 | INFO | Conexión a PostgreSQL exitosa
+2026-06-18 19:25:19,048 | ERROR | Error en UPSERT: syntax error at or near "tipo_usuario"
+LINE 47:             tipo_usuario = EXCLUDED.tipo_usuario
+                     ^
+

@@ -1,0 +1,10 @@
+2026-06-18 19:51:09,152 | INFO | file_cache is only supported with oauth2client<4.0.0
+2026-06-18 19:51:12,134 | INFO | Connected (version 2.0, client OpenSSH_9.6p1)
+2026-06-18 19:51:12,737 | INFO | Authentication (publickey) successful!
+2026-06-18 19:51:12,739 | INFO | Túnel SSH iniciado en puerto local: 49211
+2026-06-18 19:51:14,410 | INFO | Conexión a PostgreSQL exitosa
+2026-06-18 19:51:37,351 | INFO | UPSERT completado: 1 registros
+2026-06-18 19:51:37,652 | ERROR | Error crítico durante la inserción en la tabla de deudas: invalid input syntax for type numeric: "-"
+LINE 12: ...18T19:51:36.908596'::timestamp,'20608618873','NO','-','-',NU...
+                                                              ^
+

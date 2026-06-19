@@ -17,9 +17,17 @@ from src.extraction.drive_reader import (
 
 from src.extraction.sunat_scraper import sunat_consultation
 
-from src.processing.data_cleaner import clean_data
+from src.processing.data_cleaner import (
+    clean_data,
+    clean_data_deuda_coactiva
+)
 
-from src.ingestion.loader_data import get_db_connection, upsert_sunat, resume_process
+from src.ingestion.loader_data import (
+    get_db_connection,
+    upsert_sunat,
+    upsert_sunat_d_coactiva,
+    resume_process
+)
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -41,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
-    BATCH_SIZE = 10
+    BATCH_SIZE = 1  # Actualizar
 
     RESUME_PROCESS = False  # Actualizar
 
@@ -83,22 +91,29 @@ if __name__ == "__main__":
             batch = unique_rucs[batch_start : batch_start + BATCH_SIZE]
 
             results = []
+            resulta_d_coativa = []
 
             for position, ruc in enumerate(batch, start=1):
 
-                company = sunat_consultation(playwright=p, valor=ruc)
+                company, d_coactiva = sunat_consultation(playwright=p, valor=ruc)
 
-                if company is not None:
+                if company is not None and d_coactiva is not None:
                     results.append(company)
+                    resulta_d_coativa.extend(d_coactiva)
 
                 time.sleep(random.uniform(5, 15))
 
             if results:
                 df = pd.DataFrame(results)
                 df_clean = clean_data(df)
-                df_clean["tipo_usuario"] == TYPE_USER
+                df_clean["tipo_usuario"] = TYPE_USER
+
+                df_d_coactiva = pd.DataFrame(resulta_d_coativa)
+                df_d_coactiva_clean = clean_data_deuda_coactiva(df_d_coactiva)
+                df_d_coactiva_clean["tipo_usuario"] = TYPE_USER
 
                 upsert_sunat(conn, df_clean, logger)
+                upsert_sunat_d_coactiva(conn, df_d_coactiva_clean, logger)
 
             time.sleep(random.uniform(300, 360))
 

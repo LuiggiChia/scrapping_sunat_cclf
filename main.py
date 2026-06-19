@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     RESUME_PROCESS = False  # Actualizar
 
-    TYPE_USER = "DEUDOR"  # Actualizar
+    TYPE_USER = "CLIENTE"  # Actualizar
 
     print(
         f"Se está ejecutando para iniciar de 0: {RESUME_PROCESS}, para los tipos de usuario: {TYPE_USER}"

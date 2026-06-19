@@ -2,6 +2,7 @@ import os
 import psycopg2
 import paramiko
 import pandas as pd
+from datetime import date
 from dotenv import load_dotenv
 from sshtunnel import SSHTunnelForwarder
 from psycopg2.extras import execute_values
@@ -180,22 +181,32 @@ def upsert_sunat_d_coactiva(conn, df, logger):
         raise
 
 
-def resume_process(conn, lst_rucs, logger):
+def resume_process(conn, lst_rucs, tipo_usuario, logger):
+
+    hoy = date.today().strftime('%Y-%m-%d')
 
     query = """
         SELECT ruc
         FROM toquea_sunat.dm_contribuyentes_sunat
+        WHERE tipo_usuario = %s
+          AND fecha_ejecucion >= %s
+          AND fecha_ejecucion < %s + INTERVAL '1 DAY'
     """
 
-    df_bd = pd.read_sql(query, conn)
+    try:
+        df_bd = pd.read_sql(query, conn, params=(tipo_usuario, hoy, hoy))
 
-    rucs_excel = set(map(str, lst_rucs))
-    rucs_bd = set(df_bd["ruc"].astype(str))
+        rucs_excel = set(map(str, lst_rucs))
+        rucs_bd = set(df_bd["ruc"].dropna().astype(str))
 
-    missing_rucs = list(rucs_excel - rucs_bd)
+        missing_rucs = list(rucs_excel - rucs_bd)
 
-    logger.info(f"RUCs Excel: {len(rucs_excel)}")
-    logger.info(f"RUCs procesados: {len(rucs_bd)}")
-    logger.info(f"RUCs pendientes: {len(missing_rucs)}")
+        logger.info(f"RUCs Excel: {len(rucs_excel)}")
+        logger.info(f"RUCs procesados hoy: {len(rucs_bd)}")
+        logger.info(f"RUCs pendientes: {len(missing_rucs)}")
 
-    return missing_rucs
+        return missing_rucs
+
+    except Exception as e:
+        logger.error(f"Error crítico en el proceso de resumen: {str(e)}")
+        raise

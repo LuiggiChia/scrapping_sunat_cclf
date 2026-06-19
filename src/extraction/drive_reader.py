@@ -60,6 +60,7 @@ def get_reporte_giros_factoring(service, folder_id, file_name, type_user):
 
     df = pd.read_excel(io.BytesIO(file_bytes), engine="openpyxl")
     df = df[df[column_name].astype(str).str.len() == 11]
+    unique_rucs = df[column_name].dropna().astype(str).unique().tolist()
     print(f"'{file_name}' loaded successfully.")
 
-    return df
+    return unique_rucs

@@ -64,12 +64,13 @@ if __name__ == "__main__":
 
     drive_service = create_drive_service(credentials)
 
-    df_factoring = get_reporte_giros_factoring(drive_service, folder_id, file_name, TYPE_USER)
+    # df_factoring = get_reporte_giros_factoring(drive_service, folder_id, file_name, TYPE_USER)
+    unique_rucs = get_reporte_giros_factoring(drive_service, folder_id, file_name, TYPE_USER)
 
-    if df_factoring is None:
-        raise ValueError("No se pudo obtener el archivo de Drive.")
+    # if unique_rucs is None:
+    #     raise ValueError("No se pudo obtener el archivo de Drive.")
 
-    unique_rucs = df_factoring["rut_cliente"].dropna().astype(str).unique().tolist()
+    # unique_rucs = df_factoring["rut_cliente"].dropna().astype(str).unique().tolist()
 
     print(f"Total RUCs únicos encontrados: {len(unique_rucs)}")
 

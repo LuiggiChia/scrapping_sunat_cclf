@@ -59,11 +59,11 @@ def get_reporte_giros_factoring(service, folder_id, file_name, type_user):
     file_bytes = service.files().get_media(fileId=file_id).execute()
 
     df = pd.read_excel(io.BytesIO(file_bytes), engine="openpyxl")
-    if column_name == "CLIENTE":
+    if type_user == "CLIENTE":
         df[column_name] = df[column_name].astype(str).str.strip()
         df = df[df[column_name].str.len() == 11]
         unique_rucs = df[column_name].dropna().unique().tolist()
-    else:
+    elif type_user == "DEUDOR":
         df[column_name] = df[column_name].astype(str).str.split(r"\s*\|\s*")
         df = df.explode(column_name)
         df[column_name] = df[column_name].str.strip()

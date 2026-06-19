@@ -63,11 +63,13 @@ def get_reporte_giros_factoring(service, folder_id, file_name, type_user):
         df[column_name] = df[column_name].astype(str).str.strip()
         df = df[df[column_name].str.len() == 11]
         unique_rucs = df[column_name].dropna().unique().tolist()
+        print("C")
     elif type_user == "DEUDOR":
         df[column_name] = df[column_name].astype(str).str.split(r"\s*\|\s*")
         df = df.explode(column_name)
         df[column_name] = df[column_name].str.strip()
         df = df[df[column_name].str.len() == 11]
         unique_rucs = df[column_name].dropna().unique().tolist()
+        print("D")
 
     return unique_rucs

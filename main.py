@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
-    BATCH_SIZE = 1  # Actualizar
+    BATCH_SIZE = 10  # Actualizar
 
     RESUME_PROCESS = False  # Actualizar
 

@@ -17,16 +17,13 @@ from src.extraction.drive_reader import (
 
 from src.extraction.sunat_scraper import sunat_consultation
 
-from src.processing.data_cleaner import (
-    clean_data,
-    clean_data_deuda_coactiva
-)
+from src.processing.data_cleaner import clean_data, clean_data_deuda_coactiva
 
 from src.ingestion.loader_data import (
     get_db_connection,
     upsert_sunat,
     upsert_sunat_d_coactiva,
-    resume_process
+    resume_process,
 )
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -55,7 +52,9 @@ if __name__ == "__main__":
 
     TYPE_USER = "DEUDOR"  # Actualizar
 
-    print(f"Se está ejecutando para iniciar de 0: {RESUME_PROCESS}, para los tipos de usuario: {TYPE_USER}")
+    print(
+        f"Se está ejecutando para iniciar de 0: {RESUME_PROCESS}, para los tipos de usuario: {TYPE_USER}"
+    )
 
     folder_id = "19qttOpGgAZGo6pgqsW4wSHkrGxIg2nrV"
     file_name = "Reporte_Giros_Factoring.xlsx"
@@ -65,7 +64,9 @@ if __name__ == "__main__":
     drive_service = create_drive_service(credentials)
 
     # df_factoring = get_reporte_giros_factoring(drive_service, folder_id, file_name, TYPE_USER)
-    unique_rucs = get_reporte_giros_factoring(drive_service, folder_id, file_name, TYPE_USER)
+    unique_rucs = get_reporte_giros_factoring(
+        drive_service, folder_id, file_name, TYPE_USER
+    )
 
     # if unique_rucs is None:
     #     raise ValueError("No se pudo obtener el archivo de Drive.")
@@ -77,7 +78,7 @@ if __name__ == "__main__":
     conn, server = get_db_connection(logger, base_dir)
 
     if RESUME_PROCESS:
-        unique_rucs = resume_process(conn, unique_rucs, logger)
+        unique_rucs = resume_process(conn, unique_rucs, TYPE_USER, logger)
 
     if not unique_rucs:
         logger.info("No hay RUCs pendientes por procesar")

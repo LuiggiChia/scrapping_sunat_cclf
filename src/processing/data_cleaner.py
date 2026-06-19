@@ -17,7 +17,9 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df["distrito"] = parts[2].fillna("-")
 
     df["departamento"] = df["domicilio_fiscal_detalle"].str.split().str[-1].fillna("-")
-    df["direccion"] = df["domicilio_fiscal_detalle"].str.split().str[:-1].str.join(" ").fillna("-")
+    df["direccion"] = (
+        df["domicilio_fiscal_detalle"].str.split().str[:-1].str.join(" ").fillna("-")
+    )
 
     df.loc[df["direccion"] == "", "direccion"] = "-"
     df.loc[df["departamento"] == "", "departamento"] = "-"
@@ -107,9 +109,21 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
 def clean_data_deuda_coactiva(df: pd.DataFrame) -> pd.DataFrame:
     df["fecha_ejecucion"] = datetime.datetime.now()
-    df['fecha_inicio'] = pd.to_datetime(df['fecha_inicio'], dayfirst=True, errors='coerce')
-    df['monto'] = pd.to_numeric(df['monto'], errors='coerce')
+    df["fecha_inicio"] = pd.to_datetime(
+        df["fecha_inicio"], dayfirst=True, errors="coerce"
+    )
+    df["monto"] = pd.to_numeric(df["monto"], errors="coerce")
     df = df.where(pd.notnull(df), None)
-    df = df[["fecha_ejecucion", "ruc", "tiene_deuda", "monto", "periodo", "fecha_inicio", "entidad"]]
+    df = df[
+        [
+            "fecha_ejecucion",
+            "ruc",
+            "tiene_deuda",
+            "monto",
+            "periodo",
+            "fecha_inicio",
+            "entidad",
+        ]
+    ]
 
     return df

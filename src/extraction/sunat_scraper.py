@@ -101,7 +101,7 @@ def sunat_consultation(playwright: Playwright, valor: str) -> dict | None:
 
         print(f"Consulta exitosa para el RUC: {valor}")
 
-        page.locator('.btn.btn-primary.btn-sm.btnInfDeuCoa').click()
+        page.locator(".btn.btn-primary.btn-sm.btnInfDeuCoa").click()
         page.wait_for_timeout(3000)
 
         text = page.locator("body").inner_text()
@@ -111,25 +111,35 @@ def sunat_consultation(playwright: Playwright, valor: str) -> dict | None:
         data_deuda_coactiva = {
             "ruc": valor,
             "tiene_deuda_coactiva": False,
-            "deudas": []
+            "deudas": [],
         }
 
         for line in lines:
             if "DEUDA COACTIVA REMITIDA A CENTRALES DE RIESGO DE" in line:
-                info_contribuyente = line.replace("DEUDA COACTIVA REMITIDA A CENTRALES DE RIESGO DE ", "")
+                info_contribuyente = line.replace(
+                    "DEUDA COACTIVA REMITIDA A CENTRALES DE RIESGO DE ", ""
+                )
                 ruc, razon_social = info_contribuyente.split(" - ", 1)
                 data_deuda_coactiva["ruc"] = ruc.strip()
                 break
 
-        if "No se ha remitido deuda en cobranza coactiva que corresponda al contribuyente consultado." in lines:
+        if (
+            "No se ha remitido deuda en cobranza coactiva que corresponda al contribuyente consultado."
+            in lines
+        ):
             data_deuda_coactiva["tiene_deuda_coactiva"] = False
 
-        elif "Monto de la Deuda\tPeríodo Tributario\tFecha de Inicio de Cobranza Coactiva\tEntidad Asociada a la Deuda" in lines:
+        elif (
+            "Monto de la Deuda\tPeríodo Tributario\tFecha de Inicio de Cobranza Coactiva\tEntidad Asociada a la Deuda"
+            in lines
+        ):
             data_deuda_coactiva["tiene_deuda_coactiva"] = True
 
-            indice_cabecera = lines.index("Monto de la Deuda\tPeríodo Tributario\tFecha de Inicio de Cobranza Coactiva\tEntidad Asociada a la Deuda")
+            indice_cabecera = lines.index(
+                "Monto de la Deuda\tPeríodo Tributario\tFecha de Inicio de Cobranza Coactiva\tEntidad Asociada a la Deuda"
+            )
 
-            for line in lines[indice_cabecera + 1:]:
+            for line in lines[indice_cabecera + 1 :]:
                 if "\t" not in line:
                     break
 
@@ -141,7 +151,7 @@ def sunat_consultation(playwright: Playwright, valor: str) -> dict | None:
                     "monto": float(campos[0]),
                     "periodo": campos[1].strip(),
                     "fecha_inicio": campos[2].strip(),
-                    "entidad": campos[3].strip()
+                    "entidad": campos[3].strip(),
                 }
                 data_deuda_coactiva["deudas"].append(deuda_info)
 
@@ -152,7 +162,7 @@ def sunat_consultation(playwright: Playwright, valor: str) -> dict | None:
                 "monto": "-",
                 "periodo": "-",
                 "fecha_inicio": "-",
-                "entidad": "-"
+                "entidad": "-",
             }
             data_deuda_coactiva["deudas"].append(deuda_vacia)
 

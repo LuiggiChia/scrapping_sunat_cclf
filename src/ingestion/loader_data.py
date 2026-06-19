@@ -119,7 +119,7 @@ def upsert_sunat(conn, df, logger):
             r.get("actividad_secundaria_2"),
             r.get("actividad_secundaria_3"),
             r.get("domicilio_fiscal"),
-            r.get("tipo_usuario")
+            r.get("tipo_usuario"),
         )
         for r in df.to_dict(orient="records")
     ]
@@ -164,7 +164,7 @@ def upsert_sunat_d_coactiva(conn, df, logger):
             r.get("periodo"),
             r.get("fecha_inicio"),
             r.get("entidad"),
-            r.get("tipo_usuario")
+            r.get("tipo_usuario"),
         )
         for r in df.to_dict(orient="records")
     ]
@@ -173,7 +173,9 @@ def upsert_sunat_d_coactiva(conn, df, logger):
         with conn.cursor() as cur:
             execute_values(cur, query, values, page_size=1000)
         conn.commit()
-        logger.info(f"Inserción masiva completada: {len(df)} registros de deudas cargados.")
+        logger.info(
+            f"Inserción masiva completada: {len(df)} registros de deudas cargados."
+        )
 
     except Exception as e:
         conn.rollback()
@@ -183,7 +185,7 @@ def upsert_sunat_d_coactiva(conn, df, logger):
 
 def resume_process(conn, lst_rucs, tipo_usuario, logger):
 
-    hoy = date.today().strftime('%Y-%m-%d')
+    hoy = date.today().strftime("%Y-%m-%d")
 
     query = """
         SELECT ruc
